@@ -29,9 +29,9 @@ K-nearest-neighbours
 - adaboost X
 - gradient boosting X
 - naive bayes X
+- xgboost X
 
 
-- xgboost
 - logistic regression
 - GLM
 - clustering
