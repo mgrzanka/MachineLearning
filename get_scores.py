@@ -5,5 +5,5 @@ def get_regression_error(preds, Y):
 
 
 def get_classification_accurancy(preds, Y):
-    correct = sum([pred for pred, y in zip(preds, Y) if pred==y])
+    correct = sum([1 for pred, y in zip(preds, Y) if pred==y])
     return correct / len(preds)

@@ -1,11 +1,11 @@
 from src.LinearRegression.LinearRegressionModel import LinearRegressionModel
 import matplotlib.pyplot as plt
 import numpy as np
-from get_data import get_data
+from get_data import get_regression_data
 from get_scores import get_regression_error
 
 
-X_train, X_test, y_train, y_test = get_data()
+X_train, X_test, y_train, y_test = get_regression_data()
 model = LinearRegressionModel(0.5, 3000)
 model.fit(X_train, y_train)
 preds = [model.predict(x) for x in X_test]
