@@ -19,7 +19,7 @@ class Node:
 class Stump:
     def __init__(self):
         self.root = self.amount_of_say = None
-    
+
     def calculate_gini(self, node: Node, treshold: float, feature_index: int):
         left_indexes = node.x_data[:, feature_index] <= treshold
         right_indexes = node.x_data[:, feature_index] > treshold
@@ -27,7 +27,7 @@ class Stump:
         y_right = node.y_data[right_indexes]
         if len(y_left) == 0 or len(y_right) == 0:
             return None
-        
+
         left_y_values, left_y_counts = np.unique(y_left, return_counts=True)
         right_y_values, right_y_counts = np.unique(y_right, return_counts=True)
 
@@ -43,7 +43,7 @@ class Stump:
         start = np.min(X)
         stop = np.max(X)
         n = (len(np.unique(X)) // 100) + 1
-        return np.linspace(start, stop, int(len(X)/n))
+        return np.linspace(start, stop, int(len(np.unique(X))/n))
 
     def get_split_feature(self, node: Node):
         n_samples, n_features = node.x_data.shape
@@ -60,16 +60,16 @@ class Stump:
                     the_best_feature = feature_index
                     the_best_value = treshold
         return the_best_value, the_best_feature
-    
+
     def split_node(self, node: Node):
         split_value, split_feature_index = self.get_split_feature(node)
         left_indexes = node.x_data[:, split_feature_index] <= split_value
         right_indexes = node.x_data[:, split_feature_index] > split_value
-        
+
         left_y = node.y_data[left_indexes]
         left_y_values, left_y_counts = np.unique(left_y, return_counts=True)
         left_y_prediction = left_y_values[np.argmax(left_y_counts)]
-        
+
         right_y = node.y_data[right_indexes]
         right_y_values, right_y_counts = np.unique(right_y, return_counts=True)
         right_y_prediction = right_y_values[np.argmax(right_y_counts)]

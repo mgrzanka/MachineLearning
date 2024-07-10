@@ -27,7 +27,7 @@ class XGboostTree(ABC):
         self.gamma = prune_constant
         self.max_depth = max_depth
         self.root = None
- 
+
     @abstractmethod
     def get_similarity_score(self, y: np.ndarray, previous_predictions):
         pass
@@ -90,7 +90,7 @@ class XGboostTree(ABC):
     def create_leaf(self, node: Node):
         node.is_leaf = True
         node.value = self.get_leaf_value(node)
-    
+
     def stop_conditions(self, node: Node):
         return len(np.unique(node.y_data)) == 0 or node.depth > self.max_depth
 
@@ -133,7 +133,7 @@ class XGboostTree(ABC):
             node.left_child = self.prune_nodes(node.left_child)
         if node.right_child:
             node.right_child = self.prune_nodes(node.right_child)
-        
+
         if node.left_child.is_leaf and node.right_child.is_leaf:
             pruning_subtraction = node.split_gain - self.gamma
             if pruning_subtraction < 0:
@@ -170,7 +170,7 @@ class XGboostTreeClassification(XGboostTree):
 
     def get_similarity_score(self, y: np.ndarray, previous_predictions: np.ndarray):
         return (np.sum(y)**2)/(np.sum(previous_predictions*(1-previous_predictions))+self.lambd)
-    
+
     def get_leaf_value(self, node: Node):
         return np.sum(node.y_data)/(np.sum(node.previous_prediction*(1-node.previous_prediction))+self.lambd)
 

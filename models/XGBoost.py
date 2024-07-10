@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split
 
 # Regression
 X_train, X_test, y_train, y_test = get_data()
-model = XGboost(10, 0.9, 1, 1, 3, 0.5)
+model = XGboost(10, 0.9, 1, 1, 3, 20)
 model.fit(X_train, y_train)
 preds = model.predict(X_test)
 error = get_regression_error(preds, y_test)
