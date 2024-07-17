@@ -1,26 +1,37 @@
 from src.GradientBoosting.GradientBoostingModel import GBoost
-from get_scores import get_regression_error, get_classification_accurancy
-from get_data import get_data
-from sklearn.datasets import fetch_california_housing, load_breast_cancer, make_moons
-from sklearn.model_selection import train_test_split
+from TitanicDatasetPreprocessing import get_data
+from GaltonFamiliesPreprocessing import get_regression_data
+from get_scores import (get_classification_accurancy, get_mcc, get_sensitivity,
+                        get_specificity, get_precision, get_negative_predictive_value,
+                        display_confusion_matrix, get_regression_error, ROC_plot)
 
 
+# Classification
 X_train, X_test, y_train, y_test = get_data()
+model = GBoost(100, 0.1, 7, 10)
+model.fit(X_train, y_train)
+preds = model.predict(X_test)
+# Model evaluation
+accurancy = get_classification_accurancy(preds, y_test)
+mcc = get_mcc(preds, y_test)
+sensitivity = get_sensitivity(preds, y_test)
+specificity = get_specificity(preds, y_test)
+precision = get_precision(preds, y_test)
+negative_predictive_value = get_negative_predictive_value(preds, y_test)
+print("Classification problem with GBoost:")
+display_confusion_matrix(preds, y_test)
+print(f"Sensitivity with GBoost: {sensitivity}")
+print(f"Specificity with GBoost: {specificity}")
+print(f"Precision with GBoost: {precision}")
+print(f"Negative prediction value with GBoost: {negative_predictive_value}")
+print(f"Mcc with GBoost: {mcc}")
+print("Classification problem with GBoost: " + str(accurancy) + " accurancy")
+ROC_plot(model, "GBoost", X_test, y_test)
 
+# Regression
+X_train, X_test, y_train, y_test = get_regression_data()
 model = GBoost(10, 0.1, 5, 10)
 model.fit(X_train, y_train)
 preds = model.predict(X_test)
 error = get_regression_error(preds, y_test)
 print("Regression problem with GBoost: " + str(error) + " error")
-
-
-# data = load_breast_cancer()
-# X, y = data.data, data.target
-X, y = make_moons()
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-model = GBoost(100, 0.1, 5, 10)
-model.fit(X_train, y_train)
-preds = model.predict(X_test)
-accurancy = get_classification_accurancy(preds, y_test)
-print("Classification problem with GBoost: " + str(accurancy) + " accurancy")

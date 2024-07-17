@@ -32,9 +32,9 @@ class Stump:
         right_y_values, right_y_counts = np.unique(y_right, return_counts=True)
 
         left_gini = 1 - np.sum((left_y_counts/len(y_left))**2)
-        left_weight = np.sum(left_y_counts/len(y_left))
+        left_weight = len(y_left)/len(node.y_data)
         right_gini = 1 - np.sum((right_y_counts/len(y_right))**2)
-        right_weight = np.sum(right_y_counts/len(y_right))
+        right_weight = len(y_right)/len(node.y_data)
 
         return left_weight*left_gini + right_weight*right_gini
 
@@ -61,18 +61,20 @@ class Stump:
                     the_best_value = treshold
         return the_best_value, the_best_feature
 
+    def get_node_value(self, node_y: np.ndarray):
+        counts = np.bincount(node_y, minlength=2)
+        return counts[1] / len(node_y)
+
     def split_node(self, node: Node):
         split_value, split_feature_index = self.get_split_feature(node)
         left_indexes = node.x_data[:, split_feature_index] <= split_value
         right_indexes = node.x_data[:, split_feature_index] > split_value
 
         left_y = node.y_data[left_indexes]
-        left_y_values, left_y_counts = np.unique(left_y, return_counts=True)
-        left_y_prediction = left_y_values[np.argmax(left_y_counts)]
+        left_y_prediction = self.get_node_value(left_y)
 
         right_y = node.y_data[right_indexes]
-        right_y_values, right_y_counts = np.unique(right_y, return_counts=True)
-        right_y_prediction = right_y_values[np.argmax(right_y_counts)]
+        right_y_prediction = self.get_node_value(right_y)
 
         node.left_child = Node(value=left_y_prediction, is_leaf=True)
         node.right_child = Node(value=right_y_prediction, is_leaf=True)
@@ -83,8 +85,8 @@ class Stump:
         self.root = Node(x_data=X, y_data=y)
         self.split_node(self.root)
 
-    def predict(self, x: np.ndarray):
+    def predict(self, x: np.ndarray, decision_treshold):
         if x[self.root.split_feature] <= self.root.split_value:
-            return self.root.left_child.value
+            return self.root.left_child.value > decision_treshold
         else:
-            return self.root.right_child.value
+            return self.root.right_child.value > decision_treshold

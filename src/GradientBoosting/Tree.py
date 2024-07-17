@@ -7,10 +7,10 @@ class Node:
     value: float = None
     is_leaf: bool = False
     depth: int = None
-    
+
     left_child: 'Node' = None
     right_child: 'Node' = None
-    
+
     split_feature: str = None
     split_value: float = None
     x_data: np.ndarray = None
@@ -24,10 +24,10 @@ class Tree:
         self.max_samples = max_samples
         self.classification = classification
         self.root = None
-    
+
     def get_tresholds(self, x: np.ndarray):
         number_of_tresholds = min(len(np.unique(x)), 50)
-        return np.linspace(np.min(x), np.max(x), number_of_tresholds)      
+        return np.linspace(np.min(x), np.max(x), number_of_tresholds)
 
     def get_error(self, node: Node, feature_index: int, treshold: float):
         left_child_indices = node.x_data[:, feature_index] <= treshold
@@ -38,8 +38,15 @@ class Tree:
         if len(y_left) == 0 or len(y_right) == 0:
             return None
         else:
-            error_left = np.mean((y_left - np.mean(y_left))**2)
-            error_right = np.mean((y_right - np.mean(y_right))**2)
+            if self.classification:
+                left_predictions = node.predictions[left_child_indices]
+                right_predictions = node.predictions[right_child_indices]
+                epsilon = 1e-8
+                error_left = -np.mean(y_left * np.log(left_predictions + epsilon) + (1 - y_left) * np.log(1 - left_predictions + epsilon))
+                error_right = -np.mean(y_right * np.log(right_predictions + epsilon) + (1 - y_right) * np.log(1 - right_predictions + epsilon))
+            else:
+                error_left = np.mean((y_left - np.mean(y_left))**2)
+                error_right = np.mean((y_right - np.mean(y_right))**2)
             return len(y_left)/len(node.y_data) * error_left + len(y_right)/len(node.y_data) * error_right
 
     def get_split_features(self, node: Node):
@@ -83,7 +90,12 @@ class Tree:
         if not self.classification:
             node.value = np.mean(node.y_data)
         else:
-            node.value = np.sum(node.y_data)/np.sum(node.predictions * (1-node.predictions))
+            numerator = np.sum(node.y_data)
+            denumerator = np.sum(node.predictions * (1-node.predictions))
+            if denumerator == 0:
+                node.value = 0.0
+            else:
+                node.value = numerator/denumerator
 
     def stop_coditions(self, node: Node):
         return np.unique(node.y_data).size == 1 or node.depth > self.max_depth or len(node.y_data) < self.max_samples

@@ -7,10 +7,10 @@ class RegressionTree:
         self.max_depth = max_depth
         self.max_samples = max_samples
         self.root = None
-    
+
     def get_tresholds(self, x: np.ndarray):
         number_of_tresholds = min(len(np.unique(x)), 50)
-        return np.linspace(np.min(x), np.max(x), number_of_tresholds)      
+        return np.linspace(np.min(x), np.max(x), number_of_tresholds)
 
     def get_error(self, node: Node, feature_index: int, treshold: float):
         left_child_indices = node.x_data[:, feature_index] <= treshold
@@ -91,7 +91,7 @@ class RegressionTree:
                     node = node.right_child
             predictions.append(node.value)
         return np.array(predictions)
-    
+
     def prune(self, X: np.ndarray, y: np.ndarray):
         self._prune(self.root, X, y)
 
@@ -105,11 +105,11 @@ class RegressionTree:
                 node.left_child = self._prune(node.left_child, X[mask_left], y[mask_left])
             if node.right_child:
                 node.right_child = self._prune(node.right_child, X[mask_right], y[mask_right])
-            
+
             if node.left_child.is_leaf and node.right_child.is_leaf:
                 prediction_without_split = np.mean(y)
                 error_without_split = np.mean((y - prediction_without_split) ** 2)
-                
+
                 y_left = y[mask_left] if len(y[mask_left]) > 0 else np.zeros(1)
                 y_right = y[mask_right] if len(y[mask_right]) > 0 else np.zeros(1)
 
@@ -122,5 +122,5 @@ class RegressionTree:
                     node.value = prediction_without_split
                     node.left_child = None
                     node.right_child = None
-        
+
         return node

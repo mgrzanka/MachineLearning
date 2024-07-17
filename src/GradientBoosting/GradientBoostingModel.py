@@ -11,6 +11,17 @@ class GBoost:
         self.classification = False
         self.models = list()
 
+    def set_hiperaparameters(self, models_number=None, learning_rate=None, max_depth=None, max_samples=None):
+        if models_number is not None:
+            self.models_number = models_number
+        if learning_rate is not None:
+            self.learning_rate = learning_rate
+        if max_depth is not None:
+            self.max_depth = max_depth
+        if max_samples is not None:
+            self.max_samples = max_samples
+        self.models = list()
+
     def calculate_pseudo_residuals(self, X: np.ndarray, y: np.ndarray):
         prediction = self.predict(X, final_prediction=False)
         return y - prediction, prediction
@@ -29,28 +40,30 @@ class GBoost:
 
         self.models.append(model)
 
-    def fit(self, X: np.ndarray, y: np.ndarray):
+    def fit(self, X: np.ndarray, y: np.ndarray, print_progress=True):
         if len(np.unique(y)) <= 5:
             self.classification = True
 
         self.create_new_model(X, y, None, first=True)
-        print(f"1/{self.models_number} model trained")
-        
-        for iter in range(self.models_number-1):
+        if print_progress:
+            print(f"1/{self.models_number} model trained")
+
+        for iter in range(int(self.models_number)-1):
             residuals, prediction = self.calculate_pseudo_residuals(X, y)
             self.create_new_model(X, residuals, prediction)
-            print(f"{iter+2}/{self.models_number} model trained")
-        
+            if print_progress:
+                print(f"{iter+2}/{self.models_number} model trained")
+
         self.models = np.array(self.models)
 
-    def predict(self, X: np.ndarray, final_prediction=True):
+    def predict(self, X: np.ndarray, decision_treshold=0.5, final_prediction=True):
         first_model = self.models[0]
         total_prediction = first_model.predict(X)
         for model in self.models[1:]:
             total_prediction += self.learning_rate * model.predict(X)
-        
+
         if self.classification:
             percentage = np.exp(total_prediction)/(1+np.exp(total_prediction))  # change log(odds) to probability
-            return percentage if not final_prediction else percentage > 0.5
+            return percentage if not final_prediction else percentage > decision_treshold
         else:
             return total_prediction

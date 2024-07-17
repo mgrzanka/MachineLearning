@@ -16,12 +16,18 @@ class LinearRegressionModel:
         self.t_max = iterations
         self.coefficients = None
 
+    def set_hiperaparameters(self, learning_rate=None, iterations=None):
+        if learning_rate is not None:
+            self.learning_rate = learning_rate
+        if iterations is not None:
+            self.t_max = iterations
+
     def one_sample_loss_gradient(self, x: np.ndarray, y: float) -> np.ndarray:
         x = np.append(x, 1)
         y_pred = np.dot(self.coefficients, x)
         return (y_pred - y) * x
 
-    def fit(self, X: np.ndarray, y: np.ndarray):
+    def fit(self, X: np.ndarray, y: np.ndarray, print_progress=True):
         n = len(X[0]) + 1
         self.coefficients = np.zeros(shape=(n,))
         X = self._scale_data(X)
@@ -34,12 +40,16 @@ class LinearRegressionModel:
             if any(abs(self.learning_rate * gradient) > 100):
                 raise ValueError("Learning rate is too high for LR to work")
 
-            print(f"{t+1}/{self.t_max} learning iteration ended")
+            if print_progress:
+                print(f"{t+1}/{self.t_max} learning iteration ended")
 
-    def predict(self, x: np.ndarray):
-        x = (x-self.min_X)/(self.max_X-self.min_X)
-        x = np.append(x, 1)
-        return np.dot(self.coefficients, x)
+    def predict(self, X: np.ndarray):
+        X = (X-self.min_X)/(self.max_X-self.min_X)
+        predictions = []
+        for x in X:
+            x = np.append(x, 1)
+            predictions.append(np.dot(self.coefficients, x))
+        return predictions
 
     def _scale_data(self, X: np.ndarray):
         new_X = np.zeros(shape=X.shape)

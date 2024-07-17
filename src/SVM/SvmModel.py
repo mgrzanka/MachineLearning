@@ -71,6 +71,18 @@ class SVM:
         self.d = d
         self.sigma = sigma
 
+    def set_hiperaparameters(self, r=None, d=None, sigma=None, regularization_param=None, kernel=""):
+        if r is not None:
+            self.r = r
+        if d is not None:
+            self.d = d
+        if sigma is not None:
+            self.sigma = sigma
+        if regularization_param is not None:
+            self.C = regularization_param
+        if kernel:
+            self.kernel = kernel
+
     def lineal_kernel(self, X1: np.ndarray, X2: np.ndarray):
         return np.dot(X1, X2.T)
 
@@ -124,7 +136,7 @@ class SVM:
             sum_b += y - np.sum(alpha * Y * self.kernel_function(x, X))
         return sum_b/len(self.support_vectors_y)
 
-    def fit(self, X: np.ndarray, y: np.ndarray):
+    def fit(self, X: np.ndarray, y: np.ndarray, print_progress=False):
         Y = np.where(y <= 0, -1, 1)
         X = self.scale_data(X)
 
@@ -138,7 +150,7 @@ class SVM:
             x = (x-self.min_X)/(self.max_X-self.min_X+1e-8)
             prediction_value = np.sum(self.support_vectors_alpha*self.support_vectors_y*self.kernel_function(x, self.support_vectors_x)) + self.bias
             predictions.append(np.sign(prediction_value))
-        return predictions
+        return np.array(predictions)
 
     def scale_data(self, X: np.ndarray):
         self.min_X = np.min(X, axis=0)

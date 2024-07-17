@@ -1,24 +1,52 @@
 from src.SVM.SvmModel import PrimalSVM, SVM
-from get_scores import get_classification_accurancy
-from sklearn.datasets import load_breast_cancer
-from sklearn.model_selection import train_test_split
+from get_scores import (get_classification_accurancy, get_mcc, get_sensitivity,
+                        get_specificity, get_precision, get_negative_predictive_value,
+                        display_confusion_matrix)
+from TitanicDatasetPreprocessing import get_data
 import numpy as np
 
 
-iris = load_breast_cancer()
-X, y = iris.data, iris.target
-y = np.where(y == 0, -1, 1)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = get_data()
 
 
-model = SVM(r=1, d=2, sigma=2, regularization_param=1, kernel="polynomial")
+kernel = "polynomial"
+model = SVM(r=1, d=2, sigma=2, regularization_param=1, kernel=kernel)
 model.fit(X_train, y_train)
 preds = model.predict(X_test)
+preds = np.where(preds == -1, 0, 1)
+# Evaluation
 accurancy = get_classification_accurancy(preds, y_test)
-print("SVM with kernel accurancy: " + str(accurancy))
+mcc = get_mcc(preds, y_test)
+sensitivity = get_sensitivity(preds, y_test)
+specificity = get_specificity(preds, y_test)
+precision = get_precision(preds, y_test)
+negative_predictive_value = get_negative_predictive_value(preds, y_test)
+print(f"SVM in dual form with kernels (kernel is {kernel})")
+display_confusion_matrix(preds, y_test)
+print(f"Sensitivity with SVM: {sensitivity}")
+print(f"Specificity with SVM: {specificity}")
+print(f"Precision with SVM: {precision}")
+print(f"Negative prediction value with SVM: {negative_predictive_value}")
+print(f"Mcc with SVM: {mcc}")
+print(f"Accurancy with SVM: {accurancy}")
 
-model = PrimalSVM(1, 300, 0.1)
+
+model = PrimalSVM(2, 10, 0.1)
 model.fit(X_train, y_train)
 preds = model.predict(X_test)
+preds = np.where(preds == -1, 0, 1)
+# Evaluation
 accurancy = get_classification_accurancy(preds, y_test)
-print("Linear SVM accurancy: " + str(accurancy))
+mcc = get_mcc(preds, y_test)
+sensitivity = get_sensitivity(preds, y_test)
+specificity = get_specificity(preds, y_test)
+precision = get_precision(preds, y_test)
+negative_predictive_value = get_negative_predictive_value(preds, y_test)
+print("SVM in primal form without kernels")
+display_confusion_matrix(preds, y_test)
+print(f"Sensitivity with SVM: {sensitivity}")
+print(f"Specificity with SVM: {specificity}")
+print(f"Precision with SVM: {precision}")
+print(f"Negative prediction value with SVM: {negative_predictive_value}")
+print(f"Mcc with SVM: {mcc}")
+print(f"Accurancy with SVM: {accurancy}")

@@ -18,14 +18,15 @@ class Node:
 
 
 class DecisionTree:
-    def __init__(self, n_split_features, max_samples, max_depth):
+    def __init__(self, n_split_features, max_samples, max_depth, single=False):
         self.n_split_features = n_split_features
         self.max_samples = max_samples
         self.max_depth = max_depth
+        self.single = single
         self.root = None
 
     def stop_conditions(self, node: Node):
-        return len(np.unique(node.y_data)) == 0 or \
+        return len(np.unique(node.y_data)) == 1 or \
             len(node.y_data) < self.max_samples or \
             node.depth > self.max_depth
 
@@ -39,11 +40,12 @@ class DecisionTree:
     def get_gini_impurity(self, treshold: np.ndarray, feature_index: int, node: Node):
         left_indexes = node.x_data[:, feature_index] <= treshold
         right_indexes = node.x_data[:, feature_index] > treshold
-        if len(left_indexes) == 0 or len(right_indexes) == 0:
-            return None
-
         y_left = node.y_data[left_indexes]
         y_right = node.y_data[right_indexes]
+
+        if len(y_left) == 0 or len(y_right) == 0:
+            return None
+
         y_left_counts = np.unique(y_left, return_counts=True)[1]
         y_right_counts = np.unique(y_right, return_counts=True)[1]
 
@@ -59,7 +61,10 @@ class DecisionTree:
         best_gini_impurity = float("inf")
         n_samples, n_features = X.shape
 
-        possible_indexes = np.random.choice(np.arange(stop=n_features, step=1), size=(self.n_split_features,))
+        if not self.single:
+            possible_indexes = np.random.choice(np.arange(stop=n_features, step=1), size=(self.n_split_features,))
+        else:
+            possible_indexes = np.arange(stop=n_features, step=1)
         for feature_index in possible_indexes:
             tresholds = self.get_tresholds(X, feature_index)
             for treshhold in tresholds:
@@ -93,15 +98,16 @@ class DecisionTree:
 
     def create_leaf(self, node: Node):
         node.is_leaf = True
-        y, y_counts = np.unique(node.y_data, return_counts=True)
-        node.value = y[np.argmax(y_counts)]
+        y_counts = np.bincount(node.y_data, minlength=2)
+        node.value = y_counts[1]/np.sum(y_counts)
 
     def train(self, node: Node):
         if not self.stop_conditions(node):
             self.create_children(node)
-            if not node.is_leaf:
-                self.train(node.left_child)
-                self.train(node.right_child)
+            if node.is_leaf:
+                return
+            self.train(node.left_child)
+            self.train(node.right_child)
         else:
             self.create_leaf(node)
 
@@ -109,11 +115,17 @@ class DecisionTree:
         self.root = Node(x_data=X, y_data=y, depth=1)
         self.train(self.root)
 
-    def predict(self, x: np.ndarray):
+    def single_predict(self, x: np.ndarray, decision_treshold: float):
         node = self.root
         while not node.is_leaf:
             if x[node.split_feature] <= node.split_value:
                 node = node.left_child
             else:
                 node = node.right_child
-        return node.value
+        return node.value > decision_treshold
+
+    def predict(self, X: np.ndarray, decision_treshold=0.5):
+        predictions = []
+        for x in X:
+            predictions.append(self.single_predict(x, decision_treshold))
+        return predictions
