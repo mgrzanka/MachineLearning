@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from itertools import product
 from random import sample
 
-from get_scores import get_classification_accurancy
+from scores.get_scores import get_classification_accurancy
 from TitanicDatasetPreprocessing import get_data
 from src.Adaboost.AdaboostModel import Adaboost
 from src.ExtremeGradientBoost.XGBoostModel import XGboost

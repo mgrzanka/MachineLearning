@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 def get_regression_error(preds, Y):
     n = len(preds)
-    return sum([(pred-y) for pred, y in zip(preds, Y)])/n
+    return sum([(pred-y)**2 for pred, y in zip(preds, Y)])/n
 
 
 def confusion_matrix(preds: np.ndarray, y: np.ndarray):

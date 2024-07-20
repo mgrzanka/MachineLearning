@@ -1,6 +1,6 @@
 from src.RegressionTree.RegressionTreeModel import RegressionTree
 from GaltonFamiliesPreprocessing import get_regression_data
-from get_scores import get_regression_error
+from scores.get_scores import get_regression_error
 
 
 X_train, X_test, y_train, y_test = get_regression_data()

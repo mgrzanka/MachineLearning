@@ -25,8 +25,8 @@ All of the models and validation were implemented by myslef, without using sklea
 # Python package
 This repo can be installed as a package via command
 ```python
-pip install 1234
+pip install not_existing_still_in_progress_;o
 ```
 
-##### Author
+#### Author
 Małgorzata Grzanka

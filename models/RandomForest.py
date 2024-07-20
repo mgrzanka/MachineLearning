@@ -1,6 +1,6 @@
 from src.RandomForest.Tree import DecisionTree
 from src.RandomForest.RandomForestModel import RandomForest
-from get_scores import (get_classification_accurancy, get_mcc, get_sensitivity,
+from scores.get_scores import (get_classification_accurancy, get_mcc, get_sensitivity,
                         get_specificity, get_precision, get_negative_predictive_value,
                         display_confusion_matrix, ROC_plot)
 from TitanicDatasetPreprocessing import get_data

@@ -1,5 +1,5 @@
 from src.ExtremeGradientBoost.XGBoostModel import XGboost
-from get_scores import (get_classification_accurancy, get_mcc, get_sensitivity,
+from scores.get_scores import (get_classification_accurancy, get_mcc, get_sensitivity,
                         get_specificity, get_precision, get_negative_predictive_value,
                         display_confusion_matrix, get_regression_error, ROC_plot)
 from GaltonFamiliesPreprocessing import get_regression_data
