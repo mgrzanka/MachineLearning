@@ -25,8 +25,32 @@ All of the models and validation were implemented by myslef, without using sklea
 # Python package
 This repo can be installed as a package via command
 ```python
-pip install not_existing_still_in_progress_;o
+pip install machine-learning-models
 ```
-
+1) Using only models
+```python
+# Adaboost
+from machine_learning.src.Adaboost.AdaboostModel import Adaboost
+# XGBoost
+from machine_learning.src.ExtremeGradinetBoost.XGBoostModel import XGBoost
+# Gboost
+from machine_learning.src.GradientBoosting.GradientBoostingModel import GBoost
+# KNN
+from machine_learning.src.KNearestNeighbours.KNearestNeighboursModel import KNearestNeighbours
+# Linear Regression
+from machine_learning.src.LinearRegression.LinearRegressionModel import LinearRegressionModel
+# Logistic Regression
+from machine_learning.src.LogisticRegression.LogisticRegressionModel import LogisticRegression
+# Naive Bayes
+from machine_learning.src.NaiveBayes.NaiveBayesModel import NaiveBayes
+# Random Forest
+from machine_learning.src.RandomForest.RandomForestModel import RandomForest
+# DEcision and Regression Tree
+from machine_learning.src.RandomForest.Tree import DecisionTree
+from machine_learning.src.RegressionTree.RegressionTreeModel import RegressionTree
+# SVM
+from machine_learning.src.SVM.SvmModel import SVM
+from machine_learning.src.SVM.SvmModel import PrimalSVM
+```
 #### Author
 Małgorzata Grzanka

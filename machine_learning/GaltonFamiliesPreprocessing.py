@@ -5,7 +5,7 @@ import os
 
 # Predicting child's height based on family data
 def get_regression_data():
-    df = pd.read_csv(os.path.join("data", "GaltonFamilies.csv"))
+    df = pd.read_csv(os.path.join("machine_learning", "data", "GaltonFamilies.csv"))
     df['gender'] = df['gender'].map({'male': 1, 'female': 0})
     df = df.drop(columns=['family'])
 

@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import os
+from importlib import resources
 from sklearn.impute import KNNImputer, SimpleImputer
 from sklearn.model_selection import train_test_split
 
@@ -38,7 +39,8 @@ def encoding(df: pd.DataFrame):
 
 
 def get_data():
-    df = pd.read_csv(os.path.join("data", "train.csv"))
+    df = load_csv_data()
+    # df = pd.read_csv(os.path.join("machine_learning", "data", "train.csv"))
     fill_missing_data(df)
     eliminate_outliers(df)
     df = df.drop(columns=["PassengerId", "Name", "Fare", "Cabin"])
@@ -46,3 +48,9 @@ def get_data():
     y = df["Survived"].to_numpy()
     X = df.drop(columns=["Survived"]).to_numpy()
     return train_test_split(X, y, test_size=0.2, random_state=42)
+
+
+def load_csv_data():
+    with resources.open_text('machine_learning.data', 'train.csv') as file:
+        df = pd.read_csv(file)
+    return df

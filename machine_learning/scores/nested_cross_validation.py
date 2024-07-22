@@ -3,15 +3,15 @@ from abc import ABC, abstractmethod
 from itertools import product
 from random import sample
 
-from scores.get_scores import get_classification_accurancy
-from TitanicDatasetPreprocessing import get_data
-from src.Adaboost.AdaboostModel import Adaboost
-from src.ExtremeGradientBoost.XGBoostModel import XGboost
-from src.GradientBoosting.GradientBoostingModel import GBoost
-from src.KNearestNeighbours.KNearestNeighboursModel import KNearestNeighbours
-from src.LogisticRegression.LogisticRegressionModel import LogisticRegression
-from src.RandomForest.RandomForestModel import RandomForest
-from src.SVM.SvmModel import SVM
+from machine_learning.scores.get_scores import get_classification_accurancy
+from machine_learning.TitanicDatasetPreprocessing import get_data
+from machine_learning.src.Adaboost.AdaboostModel import Adaboost
+from machine_learning.src.ExtremeGradientBoost.XGBoostModel import XGboost
+from machine_learning.src.GradientBoosting.GradientBoostingModel import GBoost
+from machine_learning.src.KNearestNeighbours.KNearestNeighboursModel import KNearestNeighbours
+from machine_learning.src.LogisticRegression.LogisticRegressionModel import LogisticRegression
+from machine_learning.src.RandomForest.RandomForestModel import RandomForest
+from machine_learning.src.SVM.SvmModel import SVM
 
 
 # Test below class implementation
